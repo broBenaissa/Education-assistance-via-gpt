@@ -1,0 +1,24 @@
+{
+    "name": "lenovo/chat-assistance-php",
+
+    "autoload": {
+        "psr-4": {
+            "Lenovo\\ChatAssistancePhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "broBenaissa",
+            "email": "benaissayoussef.sh@gmail.com"
+        }
+    ],
+    
+    
+       
+        "require": {
+        "orhanerday/open-ai": "^4.7"
+    }
+      
+      
+   
+}
