@@ -2,7 +2,7 @@
 //post data
 $user_input = $_POST['user_input'] ?? '';
 // OpenAI API configuration
-$apiKey = "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";
+$apiKey = "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";
 
 // Helper function to send a chat message to the OpenAI API
 function sendChatMessage($message, $chatHistory) {
@@ -11,7 +11,7 @@ function sendChatMessage($message, $chatHistory) {
     $url = "https://api.openai.com/v1/chat/completions";
     
     $data = [
-        "model" => "gpt-4-0314",
+        "model" => "gpt-3.5-turbo",
         "messages" => $chatHistory,
     ];
     
@@ -31,27 +31,44 @@ function sendChatMessage($message, $chatHistory) {
     $ch = curl_init();
     curl_setopt_array($ch, $options);
     $response = curl_exec($ch);
-    curl_close($ch);
+     curl_close($ch);
     
-    return print_r($response);//show response
-    
+    return $response;
 }
 
+$exo ="EOD Soit F =P/Q
+où P et Q sont des polynômes tous deux non nuls et premiers entre eux. Montrer que F est paire si
+et seulement si P et Q sont pairs. Etablir un résultat analogue pour F impaire.
+EOD Soit F =P/Q
+où P et Q sont des polynômes tous deux non nuls et premiers entre eux. Montrer que F est paire si
+et seulement si P et Q sont pairs. Etablir un résultat analogue pour F impair
+EOD Soit F =P/Q
+où P et Q sont des polynômes tous deux non nuls et premiers entre eux. Montrer que F est paire si
+et seulement si P et Q sont pairs. Etablir un résultat analogue pour F impair
+EOD Soit F =P/Q
+où P et Q sont des polynômes tous deux non nuls et premiers entre eux. Montrer que F est paire si
+et seulement si P et Q sont pairs. Etablir un résultat analogue pour F impair";
 // Main 
 $chatHistory = [
    
-    ["role" => "system", "content" => "Short answer."],
-    ["role" => "system", "content" => "Educational assistant, no direct answers."],
+    ["role" => "system", "content" => "Response should be 20 words or less"],
+    ["role" => "system", "content" => "You are helpful smart ducational assistant,guide student but dont't provide exercise solutions."],
+    ["role" => "system", "content" => $exo],
+
 ];
 
 
 if (!empty($user_input)) {
     $chatHistory[] = ["role" => "user", "content" => $user_input];
     $response = sendChatMessage($user_input, $chatHistory);
+    //echo $response."\n";                  
     $responseObj = json_decode($response);
+   
     
     if (isset($responseObj->choices[0])) {
         $botMessage = $responseObj->choices[0]->message;
+        $total_tokens = $responseObj->usage->total_tokens;
+        echo 'you expend: '.$total_tokens.' tokens.'."\n\n";
         $chatHistory[] = $botMessage;
         $bot_response = $botMessage->content;
     } else {
