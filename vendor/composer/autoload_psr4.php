@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Orhanerday\\OpenAi\\' => array($vendorDir . '/orhanerday/open-ai/src'),
+    'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Lenovo\\ChatAssistancePhp\\' => array($baseDir . '/src'),
+    'LanguageDetector\\' => array($vendorDir . '/landrok/language-detector/src/LanguageDetector'),
 );

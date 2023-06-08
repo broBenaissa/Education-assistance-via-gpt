@@ -86,4 +86,4 @@ with gr.Blocks(title="Education assistante", css=".gradio-container {background-
 
 
 if __name__ == "__main__":
-    demo.launch(favicon_path='./src/icon/icon.png',show_error=True ,server_port=7862 ,share=True)#, auth=(username, password))
+    demo.launch(favicon_path='./src/icon/icon.png',show_error=True ,server_port=7862 )#, auth=(username, password))

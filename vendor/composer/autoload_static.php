@@ -7,24 +7,39 @@ namespace Composer\Autoload;
 class ComposerStaticInit2fd42da4792143a0491f12c0e07e4d65
 {
     public static $prefixLengthsPsr4 = array (
-        'O' => 
+        'W' => 
         array (
-            'Orhanerday\\OpenAi\\' => 18,
+            'Webmozart\\Assert\\' => 17,
         ),
         'L' => 
         array (
             'Lenovo\\ChatAssistancePhp\\' => 25,
+            'LanguageDetector\\' => 17,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Orhanerday\\OpenAi\\' => 
+        'Webmozart\\Assert\\' => 
         array (
-            0 => __DIR__ . '/..' . '/orhanerday/open-ai/src',
+            0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
         'Lenovo\\ChatAssistancePhp\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'LanguageDetector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/landrok/language-detector/src/LanguageDetector',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'T' => 
+        array (
+            'Text' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/text_languagedetect',
+            ),
         ),
     );
 
@@ -37,6 +52,7 @@ class ComposerStaticInit2fd42da4792143a0491f12c0e07e4d65
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit2fd42da4792143a0491f12c0e07e4d65::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit2fd42da4792143a0491f12c0e07e4d65::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2fd42da4792143a0491f12c0e07e4d65::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit2fd42da4792143a0491f12c0e07e4d65::$classMap;
 
         }, null, ClassLoader::class);

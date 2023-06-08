@@ -1,25 +1,44 @@
 <?php
+require 'data.php';
 //post data
 $api_key = $_POST['api_key'] ?? '';
 $user_input = $_POST['user_input'] ?? '';
 $exo = $_POST['exo'] ?? '';
 $order = $_POST['order'] ?? '';
-$data_list = $_POST['dataArray'] ?? '';
-
-$myArray=array();
-$myArray = json_decode($data_list);
-
-$blockedWords = ["solv","resoudr","solution mere", "solution à l'equation" , "solution finale","solution d'un problème"
-,"solution de forme","solution composite","solutions analytiques","solution globale","solution finale",
-"solution informatique","exercice résolu","exercice corrigé","réponse aux question","réponse à cette question",
-"réponse exacte","réponse de type","réponse linéaire","solution mere","resoudre l exercice","résolution numérique des équations",
-"résolution de problème","résolution numérique","résolution exercice"];
-$allowedWords=["comment","aidez moi","j ai pas compri","j ai de mal a comprendr","explique plus","esseyez d expliquer"];
 
 // Helper function to send a chat message to the OpenAI API
 function sendChatMessage($message, $chatHistory) {
-    global $api_key,$blockedWords,$allowedWords,$containBlockedWord,$containAllowedWord;
+    global $user_input,$api_key,$blockedWords,$allowedWords,$containBlockedWord,
+    $containAllowedWord,$random_messages_short_question,$random_messages_solution,
+    $french_words,$random_messages_language;
 
+    
+    #block short question
+    $wordCount = str_word_count($user_input);
+    if ($wordCount < 2) {
+        sleep(2);
+        // Output the random message
+        $randomIndex = array_rand($random_messages_short_question);
+        $randomMessage = $random_messages_short_question[$randomIndex];
+        echo $randomMessage;
+        exit;
+    }
+
+    #language detect
+    $french_words_array=explode(' ',$french_words);
+    $user_input_array=explode(' ',$user_input);
+    $commonWords = array_intersect($french_words_array,$user_input_array);
+    if (empty($commonWords)) {
+        sleep(2);
+        // Output the random message
+        $randomIndex = array_rand($random_messages_language);
+        $randomMessage = $random_messages_language[$randomIndex];
+        echo $randomMessage;
+        exit;
+    }
+
+
+    #block specific words
     foreach ($blockedWords as $blockedWord) {
         $containBlockedWord= false;
         if (stripos($message, $blockedWord) !== false) {
@@ -36,14 +55,17 @@ function sendChatMessage($message, $chatHistory) {
             break;
         }
     }
-    
+
     if($containBlockedWord && !$containAllowedWord){
-            echo("Il n'est pas approprié de fournir le résultat final ou la solution.
-            Mon objectif est de vous guider pour trouver la solution par vous-même. ");
+            sleep(2);
+            // Output the random message
+            $randomIndex = array_rand($random_messages_solution);
+            $randomMessage = $random_messages_solution[$randomIndex];
+            echo $randomMessage;
             return -1;
         }
     
-    
+    #send user input to gpt
     $url = "https://api.openai.com/v1/chat/completions";
     
     $data = [
@@ -76,22 +98,21 @@ function sendChatMessage($message, $chatHistory) {
 
 // Main 
 $chatHistory = [
-    ["role" => "user", "content" =>  "parlez en francais.Rependre dans 10 ligne de text ou moin" ],
-    ["role" => "user", "content" => "utiliser une approche étape par étape. encouragez-les à poser des questions
-    .Guider  l'élève ne donnez pas la reponse."],
+    ["role" => "system", "content" =>  "Vous Guidez  l'élève sans donner la reponse final de l'exercice."],
+    ["role" => "user", "content" =>  "Vous parlez en francais.Vous Rependez dans 20 mots ou moin." ],
+    ["role" => "user", "content" => "Vous Utiliser une approche étape par étape. encouragez-les à poser des questions."],
     ["role" => "user", "content" =>  $exo ],
 ];
 
 
 if (!empty($user_input)) {
+    
     $chatHistory[] = ["role" => "user", "content" => $user_input];
     $response = sendChatMessage($user_input, $chatHistory);
     $responseObj = json_decode($response);
     
     if (isset($responseObj->choices[0])) {
         $botMessage = $responseObj->choices[0]->message;
-        $total_tokens = $responseObj->usage->total_tokens;
-        echo 'you expend: '.$total_tokens.' tokens.'."\n\n";
         $chatHistory[] = $botMessage;
         $bot_response = $botMessage->content;
     } else {
@@ -101,4 +122,5 @@ if (!empty($user_input)) {
     echo $bot_response;
     exit;
 }
+
 ?>
