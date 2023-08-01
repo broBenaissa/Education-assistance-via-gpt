@@ -2,18 +2,67 @@
 
 $user_input = $_POST['user_input'] ?? '';
 $data_list = $_POST['dataArray'] ?? '';
+$exo = $_POST['exo'] ?? '';
 $myArray=array();
 $myArray = json_decode($data_list);
 
-$blockedWords = ["resoudre l exercice","résolution numérique des équations",
-"résolution de problème","résolution numérique",
-"résolution exercice","donne solution","donne moi solution","resoudr cet exercice","resoudr ce problem","solution mere", "solution à l'equation" , 
-"solution finale","solution d'un problème"
-,"solution de forme","solution composite","solv this","solutions analytiques",
-"solution globale","solution finale",
+$chatHistory_system = [
+    ["role" => "user", "content" => ". Notes: Réponses courtes.Rependre en francais.
+    Evitez donner la reponse direct des question de l éxercice donnez. 
+    Encouragez et motivez l étudiant à trouver la solution il même a l aides des questions".$exo ]
+];
+
+$blockedWords = ["exercice corrigé", "réponse exacte", "réponse directe", 
+"résoudre ce problème", "donne-moi la solution", "solution d'exercice", 
+"solution directe", "résoudre exercice", "problème résolu", "réponse précise", 
+"exercice résolu", "solution immédiate", "réponse rapide", "trouver solution", 
+"résoudre rapidement", "exercice terminé", "solution rapide", "trouver réponse",
+"résolution facile", "exercice difficile resol", "problème résolu", "réponse claire",
+"résoudre énigme", "trouver solution rapide", "exercice complexe", "solution efficace",
+"résoudre rapidement exercice", "problème compliqué", "réponse précise",
+"solution immédiate", "trouver solution", "résoudre facilement", "exercice terminé", 
+"solution pratique", "résoudre problème rapidement", "problème résolu", "réponse directe",
+"solution rapide", "trouver réponse", "résoudre équation", "exercice corrigé", 
+"solution immédiate", "trouver solution", "résoudre rapidement", "exercice terminé", 
+"problème résolu", "réponse précise", "solution facile", "résoudre problème", 
+"trouver réponse", "exercice résolu", "solution pratique", "résoudre rapidement exercice",
+"problème complexe", "réponse directe", "solution immédiate", "trouver solution",
+"résoudre facilement", "exercice terminé", "solution rapide", "résoudre énigme",
+"problème résolu", "réponse claire derict", "trouver réponse", "exercice complexe", 
+"solution efficace", "résoudre rapidement exercice", "problème compliqué", 
+"réponse précise", "solution pratique", "trouver solution rapide", 
+"résoudre facilement", "exercice terminé", "problème résolu", "solution rapide", 
+"trouver réponse", "résoudre équation", "exercice corrigé", "solution immédiate",
+"trouver solution", "résoudre rapidement", "exercice terminé", "problème résolu",
+"réponse précise", "solution facile", "résoudre problème", "trouver réponse",
+"exercice résolu", "solution pratique", "résoudre rapidement exercice", 
+"problème complexe", "réponse directe", "solution immédiate", "trouver solution",
+"résoudre facilement", "exercice terminé", "solution rapide", "résoudre énigme",
+"problème résolu", "réponse claire", "trouver réponse", "exercice complexe",
+"solution efficace", "résoudre rapidement exercice", "problème compliqué", 
+"réponse précise", "solution pratique", "trouver solution rapide", 
+"résoudre facilement", "exercice terminé", "problème résolu", 
+"solution rapide", "trouver réponse", "résoudre équation", "exercice corrigé",
+"solution immédiate", "trouver solution", "résoudre rapidement", 
+"exercice resolu", "problème résolu", "réponse précise", "solution facile",
+"résoudre problème", "trouver réponse", "exercice résolu", "solution pratique",
+"résoudre rapidement exercice", "problème complexe", "réponse directe", 
+"solution immédiate", "trouver solution", "résoudre facilement", 
+"exercice solvé", "solution rapide", "résoudre énigme", "problème résolu",
+"réponse derict", "trouver réponse", "exercice complexe", "solution efficace",
+"résoudre rapidement exercice", "problème compliqué", "réponse précise", 
+"solution pratique", "trouver solution rapide", "résoudre facilement", 
+"exercice a reponse complet", "problème résolu", "solution rapide", "trouver réponse", 
+"résoudre équation","resoudr exercice","résolution final",
+"résolution de problème","résolution de programme",
+"résolution exercice","donne solution","resoudr cet exercice",
+"resoudr ce problem","solution simple", "solution d'equation" , 
+"solution finale","solution d'un problème",
+"solution de forme","solution d exercice","solv this","solution derict",
+"solution globale","solution final",
 "solution informatique","exercice résolu","exercice corrigé","réponse aux question",
 "réponse à cette question",
-"réponse exacte","réponse de type","réponse linéaire","solution mere"
+"réponse exacte","réponse derict","réponse linéaire","solution mere"
 ];
 $allowedWords=["comment resoudr","aidez moi","j ai pas compri",
 "j ai de mal a comprendr",
@@ -100,7 +149,7 @@ je crois en votre capacité à le faire par vous-même.",
  J'ai confiance en votre capacité à résoudre cela par vous-même."];
 
 $french_words="le de un être et à il avoir ne je que ce qui dans en pour par sur pas se plus au
-avec tout faire son mettre autre on dire oui non ou aussi très bien même notre mais leur sans 
+avec tout faire son mettre aide moi bonjour la reponse tu ne faut  autre on dire oui non ou aussi très bien même notre mais leur sans 
 si toutefois alors car après avant pendant maintenant ainsi encore jamais toujours peu beaucoup
 trop loin près dedans dehors entre chez grâce à cause de depuis jusqu'à contre selon parmi 
 certains plusieurs quelques tous chacun personne quelque chose rien quelquefois souvent

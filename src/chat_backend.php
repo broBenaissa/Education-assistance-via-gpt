@@ -3,6 +3,7 @@ require 'data.php';
 //post data
 $api_key = $_POST['api_key'] ?? '';
 $user_input = $_POST['user_input'] ?? '';
+$updated_user_input = 'Voila ma question:'.$user_input;
 $exo = $_POST['exo'] ?? '';
 $order = $_POST['order'] ?? '';
 
@@ -11,7 +12,6 @@ function sendChatMessage($message, $chatHistory) {
     global $user_input,$api_key,$blockedWords,$allowedWords,$containBlockedWord,
     $containAllowedWord,$random_messages_short_question,$random_messages_solution,
     $french_words,$random_messages_language;
-
     
     #block short question
     $wordCount = str_word_count($user_input);
@@ -37,11 +37,11 @@ function sendChatMessage($message, $chatHistory) {
         exit;
     }
 
-
+    /*
     #block specific words
     foreach ($blockedWords as $blockedWord) {
         $containBlockedWord= false;
-        if (stripos($message, $blockedWord) !== false) {
+        if (strpos($message, $blockedWord) !== false) {
             $containBlockedWord= true;
             break;
         
@@ -57,60 +57,61 @@ function sendChatMessage($message, $chatHistory) {
     }
 
     if($containBlockedWord && !$containAllowedWord){
-            sleep(2);
-            // Output the random message
-            $randomIndex = array_rand($random_messages_solution);
-            $randomMessage = $random_messages_solution[$randomIndex];
-            echo $randomMessage;
-            return -1;
+        sleep(2);
+        // Output the random message
+        $randomIndex = array_rand($random_messages_solution);
+        $randomMessage = $random_messages_solution[$randomIndex];
+        echo $randomMessage;
+        exit;
         }
-    
-    #send user input to gpt
-    $url = "https://api.openai.com/v1/chat/completions";
-    
-    $data = [
-        "model" => "gpt-3.5-turbo",
-        "messages" => $chatHistory,
-    ];
-    
-    $headers = [
-        "Content-Type: application/json",
-        "Authorization: Bearer " . $api_key,
-    ];
-    
-    $options = [
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_HTTPHEADER => $headers,
-    ];
-    
+        */
+   else{ 
+        #send user input to gpt
+        $url = "https://api.openai.com/v1/chat/completions";
+        
+        $data = [
+            "model" => "gpt-3.5-turbo",
+            "messages" => $chatHistory,
+        ];
+        
+        $headers = [
+            "Content-Type: application/json",
+            "Authorization: Bearer " . $api_key,
+        ];
+        
+        $options = [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => $headers,
+        ];
+        
 
-    $ch = curl_init();
-    curl_setopt_array($ch, $options);
-    $response = curl_exec($ch);
-    curl_close($ch);
-    return $response ;
-    
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return $response ;
+    }
 }
 
 
 // Main 
-$chatHistory = [
-    ["role" => "system", "content" =>  "Vous Guidez  l'élève sans donner la reponse final de l'exercice."],
-    ["role" => "user", "content" =>  "Vous parlez en francais.Vous Rependez dans 20 mots ou moin." ],
-    ["role" => "user", "content" => "Vous Utiliser une approche étape par étape. encouragez-les à poser des questions."],
-    ["role" => "user", "content" =>  $exo ],
-];
-
 
 if (!empty($user_input)) {
+    $updated_user_input.=' Pour repondre à ma question prendre en consederation 
+    les ordres suivants: Donnez des réponses moins de 30 mots .Rependre en francais.
+    Evitez de donner la solution final de l´exercice donné.
+    expliquez peut a peut.
+    Encouragez et motivez l étudiant à trouver la solution il même'.$exo;
     
-    $chatHistory[] = ["role" => "user", "content" => $user_input];
-    $response = sendChatMessage($user_input, $chatHistory);
+    $chatHistory[] = ["role" => "user", "content" => $updated_user_input];
+    #$chatHistory[] =$chatHistory_system[0];
+    $response = sendChatMessage($updated_user_input, $chatHistory);
+    echo $response;
     $responseObj = json_decode($response);
-    
+    #echo $updated_user_input;
     if (isset($responseObj->choices[0])) {
         $botMessage = $responseObj->choices[0]->message;
         $chatHistory[] = $botMessage;
@@ -118,7 +119,7 @@ if (!empty($user_input)) {
     } else {
         $bot_response = "";
     }
-
+    
     echo $bot_response;
     exit;
 }
